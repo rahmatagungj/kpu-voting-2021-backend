@@ -3,10 +3,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const cookieSession = require('cookie-session');
-const port = 3001;
 const app = express();
 const apiRoutes = require("./api-routes");
+const port = process.env.PORT || 3001;
 
 app.use(bodyParser.urlencoded({
     extended: true
@@ -14,12 +13,6 @@ app.use(bodyParser.urlencoded({
 
 app.use(bodyParser.json());
 app.use(cors());
-app.use(cookieSession({
-    name: 'session',
-    keys: ['rahmat', 'agung', 'julians'],
-    maxAge: 60 * 1000
-}));
-
 app.options('*', cors());
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -51,13 +44,14 @@ function verifyToken(req, res, next) {
 }
 
 // Send message for default URL
-app.get('/', verifyToken, (req, res) => {
+app.get('/', (req, res) => {
     res.send('Hello Duded, Math Here ...')
 });
 
 
 // Use Api routes in the App
 app.use('/api', verifyToken, apiRoutes);
+
 // Launch app to listen to specified port
 app.listen(port, function () {
     console.log("Running API on port " + port);
