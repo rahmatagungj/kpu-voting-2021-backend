@@ -16,7 +16,7 @@ exports.index = function (req, res) {
             });
         }
     });
-};
+}
 
 // Handle create vote actions
 exports.new = function (req, res) {
@@ -42,7 +42,14 @@ exports.new = function (req, res) {
 
 // Handle view vote info
 exports.view = function (req, res) {
-    Vote.find({nim: req.params.nim},{ "_id": 1, "name": 1,"email": 1, "nim": 1, "vote_to": 1, "create_date": 1 }, function(err, votes) {
+    Vote.find({nim: req.params.nim}, {
+        "_id": 1,
+        "name": 1,
+        "email": 1,
+        "nim": 1,
+        "vote_to": 1,
+        "create_date": 1
+    }, function (err, votes) {
         if (err) {
             res.send(err);
         } else {
