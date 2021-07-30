@@ -6,6 +6,7 @@ const cors = require('cors');
 const app = express();
 const apiRoutes = require("./api-routes");
 const port = process.env.PORT || 3001;
+const KEY = 'User-x-1010123'
 
 app.use(bodyParser.urlencoded({
     extended: true
@@ -25,9 +26,6 @@ mongoose.connect(CONNECTION_URL, {useNewUrlParser: true});
 
 
 function verifyToken(req, res, next) {
-    let KEY = '1010123'
-    const thisDay = new Date()
-    KEY = KEY + thisDay.getMinutes().toString() + thisDay.getDay().toString()
     const bearerHeader = req.headers['authorization'];
     if (bearerHeader) {
         req.token = bearerHeader;
