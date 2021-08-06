@@ -96,7 +96,7 @@ exports.view = async (req, res) => {
             `vote-info-${req.params.nim}`,
             JSON.stringify(votes),
             "EX",
-            150
+            3
           );
           res.json({
             message: "Vote details loading..",
