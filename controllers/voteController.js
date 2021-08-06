@@ -71,41 +71,27 @@ exports.new = (req, res) => {
 
 // Handle view vote info
 exports.view = async (req, res) => {
-  const cachedVoteInfo = await client.get(`vote-info-${req.params.nim}`);
-  if (cachedVoteInfo) {
-    res.json({
-      message: "Vote details loading..",
-      data: JSON.parse(cachedVoteInfo),
-    });
-  } else {
-    Vote.find(
-      { nim: req.params.nim },
-      {
-        _id: 1,
-        name: 1,
-        email: 1,
-        nim: 1,
-        vote_to: 1,
-        create_date: 1,
-      },
-      async (err, votes) => {
-        if (err) {
-          res.send(err);
-        } else {
-          const response = await client.set(
-            `vote-info-${req.params.nim}`,
-            JSON.stringify(votes),
-            "EX",
-            3
-          );
-          res.json({
-            message: "Vote details loading..",
-            data: votes,
-          });
-        }
+  Vote.find(
+    { nim: req.params.nim },
+    {
+      _id: 1,
+      name: 1,
+      email: 1,
+      nim: 1,
+      vote_to: 1,
+      create_date: 1,
+    },
+    (err, votes) => {
+      if (err) {
+        res.send(err);
+      } else {
+        res.json({
+          message: "Vote details loading..",
+          data: votes,
+        });
       }
-    );
-  }
+    }
+  );
 };
 
 // Handle update vote info
