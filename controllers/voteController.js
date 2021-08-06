@@ -33,7 +33,7 @@ exports.index = async (req, res) => {
             data: JSON.stringify(votes),
           }),
           "EX",
-          150
+          30
         );
         res.json({
           status: "success",
@@ -171,7 +171,7 @@ exports.count = async (req, res) => {
             `vote-count-${req.params.vote_to}`,
             JSON.stringify(votes),
             "EX",
-            150
+            30
           );
           res.json({
             status: "success",
