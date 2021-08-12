@@ -1,50 +1,23 @@
-const client = require("../redis-client");
-
 // Import vote model
 Vote = require("../models/voteModel");
 
 exports.index = async (req, res) => {
-  const cachedVotes = await client.get("votes");
-
-  if (cachedVotes) {
-    const cache = JSON.parse(cachedVotes);
-    res.json({
-      status: cache.status,
-      message: cache.message,
-      date: cache.date,
-      fromCached: cache.fromCached,
-      data: JSON.parse(cache.data),
-    });
-  } else {
-    Vote.get(async (err, votes) => {
-      if (err) {
-        res.json({
-          status: "error",
-          message: err,
-        });
-      } else {
-        const response = await client.set(
-          "votes",
-          JSON.stringify({
-            status: "success",
-            message: "Vote retrieved successfully",
-            date: new Date(),
-            fromCached: true,
-            data: JSON.stringify(votes),
-          }),
-          "EX",
-          30
-        );
-        res.json({
-          status: "success",
-          message: "Vote retrieved successfully",
-          date: new Date(),
-          fromCached: false,
-          data: votes,
-        });
-      }
-    });
-  }
+  Vote.get(async (err, votes) => {
+    if (err) {
+      res.json({
+        status: "error",
+        message: err,
+      });
+    } else {
+      res.json({
+        status: "success",
+        message: "Vote retrieved successfully",
+        date: new Date(),
+        fromCached: false,
+        data: votes,
+      });
+    }
+  });
 };
 
 // Handle create vote actions
@@ -138,33 +111,19 @@ exports.delete = function (req, res) {
 
 // Handle count vote
 exports.count = async (req, res) => {
-  const cachedCount = await client.get(`vote-count-${req.params.vote_to}`);
-  if (cachedCount) {
-    res.json({
-      status: "success",
-      message: JSON.parse(cachedCount),
-    });
-  } else {
-    Vote.countDocuments(
-      {
-        vote_to: req.params.vote_to,
-      },
-      async (err, votes) => {
-        if (err) {
-          res.send(err);
-        } else {
-          const response = await client.set(
-            `vote-count-${req.params.vote_to}`,
-            JSON.stringify(votes),
-            "EX",
-            30
-          );
-          res.json({
-            status: "success",
-            message: votes,
-          });
-        }
+  Vote.countDocuments(
+    {
+      vote_to: req.params.vote_to,
+    },
+    async (err, votes) => {
+      if (err) {
+        res.send(err);
+      } else {
+        res.json({
+          status: "success",
+          message: votes,
+        });
       }
-    );
-  }
+    }
+  );
 };
